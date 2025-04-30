@@ -172,6 +172,7 @@ app.controller('courseController', function($scope, $http, $window, authService)
     }, {
       headers: { Authorization: `Bearer ${token}` }
     }).then(res => {
+      //yours publish stripe api key
       const stripe = Stripe('');
       stripe.redirectToCheckout({ sessionId: res.data.id });
     }).catch(err => {
