@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html ng-app="lmsApp">
+
+<head>
+  <meta charset="UTF-8">
+  <title>LMS-MEAN-STACK</title>
+
+  <!-- AngularJS -->
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular-route.min.js"></script>
+
+  <!-- App Scripts -->
+  <script src="app.js"></script>
+  <script src="services/authService.js"></script>
+  <script src="services/toastService.js"></script>
+
+  <script src="controllers/loginController.js"></script>
+  <script src="controllers/courseController.js"></script>
+  <script src="controllers/addCourseController.js"></script>
+  <script src="controllers/registerController.js"></script>
+  <script src="controllers/myCoursesController.js"></script>
+  <script src="controllers/courseContentController.js"></script>
+  <script src="controllers/uploadContentController.js"></script>
+  <script src="controllers/logoutController.js"></script>
+  <script src="controllers/paymentSuccessController.js"></script>
+
+  <!-- Stripe -->
+  <script src="https://js.stripe.com/v3/"></script>
+
+  <!-- Toastr for Toasts -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+  <!-- TailwindCSS -->
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+</head>
+
+<body class="bg-gradient-to-r from-indigo-100 via-blue-100 to-purple-100 text-gray-900 min-h-screen flex flex-col"
+  ng-controller="authController">
+
+  <!-- Navigation Bar -->
+  <nav class="bg-white shadow-lg p-4 flex justify-between items-center w-full sticky top-0 z-50">
+    <div class="text-3xl ml-10 font-extrabold text-gray-800 tracking-wide">
+      LMS-MEAN-STACK
+    </div>
+
+    <ul class="flex gap-6 items-center">
+      <!-- Not logged in -->
+      <li ng-if="!isLoggedIn">
+        <a href="#!/login"
+          class="py-2 px-5 bg-black text-white text-md font-medium rounded-full shadow hover:bg-gray-800 transition duration-300">
+          Login
+        </a>
+      </li>
+      <li ng-if="!isLoggedIn">
+        <a href="#!/register"
+          class="py-2 px-5 bg-black text-white text-md font-medium rounded-full shadow hover:bg-gray-800 transition duration-300 mr-6">
+          Register
+        </a>
+      </li>
+
+      <!-- Logged in -->
+      <li ng-if="isLoggedIn">
+        <a href="#!/courses"
+          class="text-md text-gray-700 hover:text-black hover:underline transition duration-200">Courses</a>
+      </li>
+      <li ng-if="isLoggedIn && !isAdmin">
+        <a href="#!/my-courses"
+          class="text-md text-gray-700 hover:text-black hover:underline transition duration-200">My Courses</a>
+      </li>
+
+      <!-- Only Admin -->
+      <li ng-if="isLoggedIn && isAdmin">
+        <a href="#!/add-course"
+          class="text-md text-gray-700 hover:text-black hover:underline transition duration-200">Add Course</a>
+      </li>
+      <li ng-if="isLoggedIn && isAdmin">
+        <a href="#!/upload-content"
+          class="text-md text-gray-700 hover:text-black hover:underline transition duration-200">Upload Content</a>
+      </li>
+    </ul>
+
+    <!-- Logout Button -->
+    <button ng-if="isLoggedIn" ng-controller="logoutController" ng-click="logout()"
+      class="py-2 px-6 bg-red-600 text-white rounded-full text-md font-semibold hover:bg-red-700 transition duration-300 mr-10">
+      Logout
+    </button>
+  </nav>
+
+  <!-- Main Content Area -->
+  <div class="flex-grow">
+    <div ng-view></div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="bg-black text-white text-center py-4">
+    <p class="text-md">© 2025 LMS-MEAN-STACK. All Rights Reserved.</p>
+    <p class="text-md">Developed by Ayush-And-Team</p>
+  </footer>
+
+  <!-- Inline Auth & Logout Controllers -->
+  <script>
+    angular.module('lmsApp').controller('authController', ['$scope', '$window', '$timeout', '$rootScope', 'authService', function ($scope, $window, $timeout, $rootScope, authService) {
+
+      function checkLoginStatus() {
+        $scope.isLoggedIn = authService.isLoggedIn();
+        $scope.isAdmin = false;
+
+        if ($scope.isLoggedIn) {
+          const role = authService.getRole();
+          $scope.isAdmin = (role === 'admin');  // ✅ Check if role is admin
+        }
+      }
+
+      checkLoginStatus();
+
+      $rootScope.$on('authChanged', function () {
+        checkLoginStatus();
+      });
+
+      $window.addEventListener('storage', function () {
+        $timeout(function () {
+          checkLoginStatus();
+        });
+      });
+
+    }]);
+
+    angular.module('lmsApp').controller('logoutController', ['$scope', '$window', '$rootScope', 'authService', function ($scope, $window, $rootScope, authService) {
+      $scope.logout = function () {
+        authService.logout();
+        $rootScope.$emit('authChanged');
+        $window.location.href = '#!/';
+      };
+    }]);
+  </script>
+
+</body>
+
+</html>

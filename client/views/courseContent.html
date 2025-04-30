@@ -1,0 +1,86 @@
+<div class="min-h-screen bg-gradient-to-r from-indigo-100 via-blue-100 to-purple-100 py-10" ng-controller="courseContentController">
+  <div class="max-w-5xl mx-auto bg-white rounded-2xl shadow-xl p-8 border border-gray-200">
+    
+    <div class="flex justify-between items-center mb-6">
+      <button 
+        ng-click="goBack()" 
+        class="text-lg bg-blue-500 text-white px-6 py-2 rounded-lg shadow-md hover:bg-blue-600 transition duration-300"
+      >
+        Back
+      </button>
+
+      <h2 class="text-3xl font-bold text-center text-indigo-700 flex-1">Course Content</h2>
+
+      <div></div> 
+    </div>
+
+    <div ng-if="!contents || contents.length === 0" class="text-center text-lg text-gray-600 p-6">
+      <p>No content available.</p>
+    </div>
+
+    <div 
+      ng-repeat="content in contents" 
+      class="flex justify-between items-center bg-gradient-to-br from-white to-gray-100 border p-6 rounded-xl shadow-md mb-6 hover:shadow-lg transition duration-300"
+      ng-class="{
+        'border-green-400 bg-green-50': isContentRead(content._id),
+        'border-gray-200': !isContentRead(content._id)
+      }"
+    >
+      <div>
+        <h3 class="text-xl font-semibold text-blue-800 mb-2">{{ content.title }}</h3>
+        <button 
+          ng-click="openModal(content)" 
+          class="text-blue-600 hover:text-blue-800 underline font-medium"
+        >
+          View / Download
+        </button>
+      </div>
+
+      <div>
+        <button 
+          ng-click="markAsRead(content._id)" 
+          class="flex items-center gap-2 px-4 py-2 text-sm font-medium transition duration-300 border rounded-md"
+          ng-class="{
+            'bg-green-100 text-green-700 border-green-400 hover:bg-green-200': isContentRead(content._id),
+            'bg-gray-100 text-gray-700 border-gray-300 hover:bg-gray-200': !isContentRead(content._id)
+          }"
+          ng-disabled="isContentRead(content._id)"
+        >
+          <span ng-if="!isContentRead(content._id)">✅ Mark as Read</span>
+          <span ng-if="isContentRead(content._id)">📖 Already Read</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal for View -->
+  <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" ng-show="showModal">
+    <div class="bg-white rounded-xl shadow-lg p-6 max-w-2xl w-full relative animate-fade-in">
+      <h3 class="text-2xl font-bold text-indigo-700 mb-4 text-center">{{ selectedContent.title }}</h3>
+
+      <div ng-if="selectedContent.filePath.endsWith('.mp4')">
+        <video controls class="w-full rounded-md border">
+          <source ng-src="http://localhost:5050/{{ selectedContent.filePath }}" type="video/mp4">
+          Your browser does not support the video tag.
+        </video>
+      </div>
+
+      <div ng-if="!selectedContent.filePath.endsWith('.mp4')" class="text-center mt-4">
+        <a 
+          ng-href="http://localhost:5050/{{ selectedContent.filePath }}" 
+          target="_blank" 
+          class="text-blue-600 hover:text-blue-800 underline text-lg font-medium"
+        >
+          Open File
+        </a>
+      </div>
+
+      <button 
+        ng-click="closeModal()" 
+        class="w-full mt-6 py-3 bg-red-500 hover:bg-red-600 text-white font-semibold rounded-md"
+      >
+        Close
+      </button>
+    </div>
+  </div>
+</div>

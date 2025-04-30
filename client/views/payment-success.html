@@ -1,0 +1,36 @@
+<div class="flex items-center justify-center min-h-screen bg-gradient-to-tr from-green-100 via-blue-100 to-purple-100">
+    <div class="text-center">
+      <h1 class="text-4xl font-bold text-green-600 mb-6 animate-bounce">✅ Payment Successful!</h1>
+      <p class="text-lg text-gray-700 mb-6">You are being enrolled into your course...</p>
+      <div class="loader ease-linear rounded-full border-8 border-t-8 border-gray-200 h-16 w-16 mx-auto"></div>
+    </div>
+  </div>
+  
+  <script>
+  angular.module('lmsApp').controller('paymentSuccessController', function($scope, $http, $location, $window, authService) {
+    
+    const token = authService.getToken();
+    const urlParams = new URLSearchParams($window.location.search);
+    const courseId = urlParams.get('courseId');
+  
+    if (!token || !courseId) {
+      alert('Invalid access.');
+      $location.path('/courses');
+      return;
+    }
+  
+    // Now enroll the user
+    $http.post('http://localhost:5050/api/enroll/' + courseId, {}, {
+      headers: { Authorization: `Bearer ${token}` }
+    }).then(function(res) {
+      alert('🎉 Successfully Enrolled!');
+      $location.path('/my-courses');
+    }).catch(function(err) {
+      console.error('Enrollment error:', err);
+      alert('❌ Enrollment failed. Please contact support.');
+      $location.path('/courses');
+    });
+  
+  });
+  </script>
+  
