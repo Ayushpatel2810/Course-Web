@@ -58,12 +58,12 @@
     <div class="bg-white rounded-xl shadow-lg p-6 max-w-2xl w-full relative animate-fade-in">
       <h3 class="text-2xl font-bold text-indigo-700 mb-4 text-center">{{ selectedContent.title }}</h3>
 
-      <div ng-if="selectedContent.filePath.endsWith('.mp4')">
+      <!-- <div ng-if="selectedContent.filePath.endsWith('.mp4')">
         <video controls class="w-full rounded-md border">
           <source ng-src="http://localhost:5050/{{ selectedContent.filePath }}" type="video/mp4">
           Your browser does not support the video tag.
         </video>
-      </div>
+      </div> -->
 
       <div ng-if="!selectedContent.filePath.endsWith('.mp4')" class="text-center mt-4">
         <a 

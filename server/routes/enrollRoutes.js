@@ -38,6 +38,7 @@ router.get('/my', authMiddleware, async (req, res) => {
       res.status(500).json({ message: 'Error fetching my courses', error: err.message });
     }
   });
+  
   router.post('/enroll', authMiddleware, async (req, res) => {
     const { courseId } = req.body;
     const userId = req.user._id;

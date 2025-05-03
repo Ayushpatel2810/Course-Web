@@ -58,7 +58,7 @@ app.config(function ($routeProvider) {
       controller: 'uploadContentController'
     })
     .when('/course/:courseId/content', {
-      templateUrl: 'views/coursecontent.html',
+      templateUrl: 'views/courseContent.html',
       controller: 'courseContentController'
     })
     .when('/profile', {
@@ -71,6 +71,29 @@ app.config(function ($routeProvider) {
     })
     .otherwise({ redirectTo: "/" });
 });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // Directive to handle file input
 app.directive('fileModel', ['$parse', function ($parse) {

@@ -3,7 +3,6 @@ const router = express.Router();
 const authenticate = require('../middleware/auth');
 const User = require('../models/User');
 
-// ✅ Only '/' here (NOT '/api/my-courses')
 router.get('/', authenticate, async (req, res) => {
   try {
     const user = await User.findById(req.user.userId).populate('enrolledCourses');

@@ -11,12 +11,31 @@ app.controller('courseController', function($scope, $http, $window, authService)
   $scope.loading = true;
   $scope.courses = [];
   $scope.enrolledCourseIds = [];
+  $scope.isAdmin = authService.getRole() === 'admin';
 
   // Load all data
   function init() {
     loadCourses();
     loadEnrolledCourses();
   }
+
+  
+  $scope.deleteCourse = function(courseId) {
+      //console.log('Course ID to be deleted:', courseId);  // Log the courseId
+
+    if (!confirm('Are you sure you want to delete this course?')) return;
+
+    $http.delete(`http://localhost:5050/api/courses/${courseId}`, {
+      headers: { Authorization: `Bearer ${token}` }
+    }).then(() => {
+      alert('✅ Course deleted successfully.');
+      loadCourses(); // Reload course list
+    }).catch(err => {
+      console.error('Error deleting course:', err);
+
+      alert('❌ Failed to delete course: ' + (err.data?.message || err.message));
+    });
+  };
 
   // Fetch all available courses
   function loadCourses() {
@@ -61,7 +80,7 @@ app.controller('courseController', function($scope, $http, $window, authService)
       headers: { Authorization: `Bearer ${token}` }
     }).then(res => {
       //yours publish stripe api key
-      const stripe = Stripe('');
+      const stripe = Stripe('pk_test_51QuPUwHW7bdkqoG5HdOmDPIkW3b13MWU2EsMWxgGyCOPtaDDBnDbLfKys7vNvRpj68U6cWCFOx9CuNUfCSEOU0RO00AiX0f2nY');
       stripe.redirectToCheckout({ sessionId: res.data.id });
     }).catch(err => {
       console.error('Stripe checkout error:', err);
@@ -87,6 +106,8 @@ app.controller('courseController', function($scope, $http, $window, authService)
   $scope.isAlreadyEnrolled = function(courseId) {
     return $scope.enrolledCourseIds.includes(courseId);
   };
+
+  
 
   // Initialize on load
   init();
